@@ -1,6 +1,9 @@
 import React from 'react';
-import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
 
+/**
+ * 引入各个页面组件
+ */
 import App from '../App'
 import WebLoginPage from "../pages/Login/WebLogin";
 import UserInfoPage from "../pages/UserInfo/UserInfoPage";
@@ -23,7 +26,7 @@ import CoursePage from "../pages/Course/CoursePage";
  */
 
 const AppRouter = () => (
-    <BrowserRouter>
+    <div>
         <Switch>
             <Route path="/" exact render={() => <Redirect to="/login" />}/>
             <Route exact path="/app" component={App}/>
@@ -34,7 +37,7 @@ const AppRouter = () => (
             <Route exact path="/user/course" component={CoursePage}/>
             <Route render={() => <h1 className={''}>找不到此页面</h1>} />
         </Switch>
-    </BrowserRouter>
+    </div>
 );
 
 export default AppRouter
