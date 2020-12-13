@@ -1,4 +1,4 @@
-const CoursePage = () => (
+const CoursePage= () => (
     <div>
         CoursePage
     </div>

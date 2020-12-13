@@ -3,6 +3,10 @@ import ReactDOM from 'react-dom';
 import App from "./App";
 import reportWebVitals from './utils/reportWebVitals';
 
+import './styles/entry.less'
+import './utils/icons/iconfont'
+import './styles/swiper.css';
+
 ReactDOM.render(
     <App />,
     document.getElementById('root')

@@ -1,7 +1,9 @@
+import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 
 import AppRouter from "./router/router";
-import HeaderComponent from "./components/Header/HeaderComponent";
+import WebHeader from "./components/header";
+import WebFooter from "./components/footer";
 
 /**
  *  入口组件
@@ -9,8 +11,9 @@ import HeaderComponent from "./components/Header/HeaderComponent";
 function App() {
   return (
       <BrowserRouter>
-          <HeaderComponent/>
+          <WebHeader/>
           <AppRouter/>
+          <WebFooter/>
       </BrowserRouter>
   );
 }
