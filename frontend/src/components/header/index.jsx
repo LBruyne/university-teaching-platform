@@ -6,6 +6,10 @@ import sxxlogo from "../../assets/images/header/sxxlogo.png"
 /**
  * logo + 导航栏
  */
+
+function goto_course(){
+    window.location.href = 'user/course';
+}
 const WebHeader = () => {
 
     return(
@@ -15,7 +19,9 @@ const WebHeader = () => {
             </div>
             <div className="header-ul">
                 <li>热门课程</li>
-                <li>我的课程</li>
+                <li onClick={goto_course}>
+                    我的课程
+                </li>
                 <li>个人信息</li>
                 <li>专栏</li>
                 <li>文章</li>
