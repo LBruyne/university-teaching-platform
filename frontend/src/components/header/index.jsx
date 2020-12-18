@@ -8,7 +8,7 @@ import sxxlogo from "../../assets/images/header/sxxlogo.png"
  */
 
 function goto_course(){
-    window.location.href = 'user/course';
+    window.location.href = '/user/course';
 }
 
 const WebHeader = () => {
