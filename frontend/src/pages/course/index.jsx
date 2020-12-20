@@ -1,4 +1,5 @@
 import React from 'react';
+import download_icon from '../../assets/images/CoursePage/download.png';
 
 class CoursePage extends React.Component{
     constructor(props) {
@@ -66,7 +67,22 @@ class CoursePage extends React.Component{
 
         let material = () => {
             let elems = course.mtrl.map(
-                (e) => <div className="cp-content-text">{e}</div>
+                (e) =>
+                    <div class="cp-content-material">
+                        <div class="material-title">{e}</div>
+                        <div
+                            class="btn-download"
+                            onClick={
+                                () => {
+                                    alert("downloading...");
+                                }
+                            }>
+                            <img
+                                class="download-icon"
+                                src={download_icon}
+                            />
+                        </div>
+                    </div>
             )
             return (
                 <div>
@@ -120,7 +136,7 @@ class CoursePage extends React.Component{
                 return {}
         }
         return (
-            <div class="coursepage" style={style}>
+            <div class="coursePage" style={style}>
                 <div class="cp-header">
                     <div class="cp-header-info">
                         <div class="cp-header-title">
@@ -136,7 +152,7 @@ class CoursePage extends React.Component{
                 </div>
                 <div class="cp-navigation">
                     <div class="cp-navigation-list">
-                        <li class="cp-navigation-infomation"
+                        <li class="cp-navigation-information"
                             style={getStyleByFlag(this.INFO)}
                             onClick={()=>{
                                 this.setState({
