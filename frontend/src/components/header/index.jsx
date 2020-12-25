@@ -10,6 +10,9 @@ import sxxlogo from "../../assets/images/header/sxxlogo.png"
 function goto_course(){
     window.location.href = '/user/course';
 }
+function goto_userhome(){
+    window.location.href = '/user/home';
+}
 
 const WebHeader = () => {
 
@@ -40,9 +43,9 @@ const WebHeader = () => {
             </div>
             <div className="header-right">
 
-                <div className="header-btn login" onClick={()=>{
-
-                }}>登录</div>
+                <div className="header-btn login"
+                     onClick={goto_userhome}>
+                    登录</div>
                 <div className='btn-line'>/</div>
                 <div className="header-btn register" onClick={()=>{
 
