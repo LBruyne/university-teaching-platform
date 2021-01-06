@@ -1,10 +1,13 @@
+from datetime import datetime
+from datetime import timedelta
+from datetime import date
 from sqlalchemy.dialects.mysql import INTEGER, VARCHAR,  DATETIME, TIME, DATE, CHAR, NUMERIC, BIT
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from json import JSONEncoder
-
+import copy
 
 Base = declarative_base()
 
@@ -49,7 +52,7 @@ class Student(Base):
     email = Column(VARCHAR(100), nullable=False)
 
     def __init__(self, id, username, major, email):
-        self.id = id
+        self.id = str(id).encode()
         self.userName = username
         self.major = major
         self.email = email
@@ -78,8 +81,8 @@ class Course(Base):
     semester = Column(CHAR(10), nullable=False)
     startTime = Column(DATE, nullable=False)
     endTime = Column(DATE, nullable=False)
-    courseStart = Column(TIME(fsp=2))
-    courseEnd = Column(TIME(fsp=2))
+    courseStart = Column(TIME)
+    courseEnd = Column(TIME)
     hotIndex = Column(INTEGER, nullable=False)
     Image = Column(VARCHAR(256), nullable=False)
     description = Column(VARCHAR(1000), nullable=False)
@@ -131,9 +134,9 @@ class Homework(Base):
     courseDescriptor = Column(VARCHAR(256), ForeignKey('Course.courseDescriptor'), index=True)
     homeworkTitle = Column(VARCHAR(100), primary_key=True)
     homeworkContent = Column(VARCHAR(5000), nullable=False)
-    startTime = Column(DATETIME(fsp=2), primary_key=True)
+    startTime = Column(DATETIME, primary_key=True)
     creatorUsername = Column(VARCHAR(100), ForeignKey('PUser.userName'), primary_key=True, nullable=False)
-    endTime = Column(DATETIME(fsp=2))
+    endTime = Column(DATETIME)
 
     def __init__(self, descriptor, hktitle, stime, etime, cusername, hwkcontent):
         self.courseDescriptor = descriptor
@@ -149,7 +152,7 @@ class Participation(Base):
     studentUsername = Column(VARCHAR(100), ForeignKey('PUser.userName'), primary_key=True)
     courseDescriptor = Column(VARCHAR(256), ForeignKey('Course.courseDescriptor'), primary_key=True)
     finalGrade = Column(NUMERIC(5, 2))
-    signInTime = Column(DATETIME(fsp=2))
+    signInTime = Column(DATETIME)
 
     def __init__(self, sname, cd, fg, sit):
         self.studentUsername = sname
@@ -163,7 +166,7 @@ class HandInHomework(Base):
     submitUserName = Column(VARCHAR(100), ForeignKey('PUser.userName'), primary_key=True, nullable=False)
     gradeUserName = Column(VARCHAR(100), ForeignKey('PUser.userName'), nullable=True)
     grades = Column(NUMERIC(5, 2))
-    handInTime = Column(DATETIME(fsp=2), primary_key=True)
+    handInTime = Column(DATETIME, primary_key=True)
     fileName = Column(VARCHAR(256), nullable=False)
     file = Column(VARCHAR(256), nullable=False)
     courseDescriptor = Column(VARCHAR(256), ForeignKey('Course.courseDescriptor'), nullable=False)
@@ -184,7 +187,7 @@ class Reference(Base):
     __tablename__ = "Reference"
     referenceName = Column(VARCHAR(100), nullable=False)
     file = Column(VARCHAR(256), nullable=False)
-    upLoadTime = Column(DATETIME(fsp=2), primary_key=True)
+    upLoadTime = Column(DATETIME, primary_key=True)
     downloadable = Column(BIT(1), nullable=False)
     courseDescriptor = Column(VARCHAR(256), ForeignKey('Course.courseDescriptor'), primary_key=True, nullable=False)
 
@@ -198,7 +201,7 @@ class Reference(Base):
 class Notification(Base):
     __tablename__ = 'Notification'
     content = Column(VARCHAR(1000))
-    createTime = Column(DATETIME(fsp=2), primary_key=True)
+    createTime = Column(DATETIME, primary_key=True)
     creatorUsername = Column(VARCHAR(100), ForeignKey('Manage.userName'), primary_key=True)
     courseDescriptor = Column(VARCHAR(256), ForeignKey('Course.courseDescriptor'), primary_key=True)
 
@@ -213,7 +216,7 @@ class Complain(Base):
     __tablename__ = 'Complain'
     studentUsername = Column(VARCHAR(100), ForeignKey('PUser.userName'), primary_key=True, nullable=False)
     courseDescriptor = Column(VARCHAR(256), ForeignKey('Course.courseDescriptor'))
-    handInTime = Column(DATETIME(fsp=2), primary_key=True)
+    handInTime = Column(DATETIME, primary_key=True)
     reason = Column(VARCHAR(1000))
 
     def __init__(self, stu, cour, hdint, reasn):
@@ -229,58 +232,73 @@ class MyJSONEncoder(JSONEncoder):
             return {'userName': obj.userName, 'nickName': obj.nickName}
         elif isinstance(obj, Teacher):
             # return {obj.id,obj.userName,obj.firstName,obj.lastName,obj.department}
-            return obj.__dict__
+            temp = copy.deepcopy(obj.__dict__)
+            temp.pop('_sa_instance_state')
+            return temp
         elif isinstance(obj, Student):
-            return obj.__dict__
+            temp = copy.deepcopy(obj.__dict__)
+            temp.pop('_sa_instance_state')
+            return temp
         elif isinstance(obj, TA):
-            temp = obj.__dict__
+            temp = copy.deepcopy(obj.__dict__)
             temp['courseName'] = courseDescriptor2Name(temp['courseDescriptor'])
+            temp.pop('_sa_instance_state')
             return temp
         elif isinstance(obj, Course):
-            temp = obj.__dict__
+            temp = copy.deepcopy(obj.__dict__)
+            temp.pop('_sa_instance_state')
             return temp
         elif isinstance(obj, Manage):
-            temp = obj.__dict__
+            temp = copy.deepcopy(obj.__dict__)
             temp['courseName'] = courseDescriptor2Name(temp['courseDescriptor'])
+            temp.pop('_sa_instance_state')
             return temp
         elif isinstance(obj, Homework):
-            temp = obj.__dict__
+            temp = copy.deepcopy(obj.__dict__)
             temp['courseName'] = courseDescriptor2Name(temp['courseDescriptor'])
+            temp.pop('_sa_instance_state')
             return temp
         elif isinstance(obj, HandInHomework):
-            temp = obj.__dict__
+            temp = copy.deepcopy(obj.__dict__)
             temp['courseName'] = courseDescriptor2Name(temp['courseDescriptor'])
+            temp.pop('_sa_instance_state')
             return temp
         elif isinstance(obj, Reference):
-            temp = obj.__dict__
+            temp = copy.deepcopy(obj.__dict__)
             temp['courseName'] = courseDescriptor2Name(temp['courseDescriptor'])
+            temp.pop('_sa_instance_state')
+            return temp
         elif isinstance(obj, Participation):
-            temp = obj.__dict__
+            temp = copy.deepcopy(obj.__dict__)
             temp['courseName'] = courseDescriptor2Name(temp['courseDescriptor'])
+            temp.pop('_sa_instance_state')
+            return temp
         elif isinstance(obj, Notification):
-            temp = obj.__dict__
+            temp = copy.deepcopy(obj.__dict__)
             temp['courseName'] = courseDescriptor2Name(temp['courseDescriptor'])
+            temp.pop('_sa_instance_state')
             return temp
         elif isinstance(obj, Complain):
-            temp = obj.__dict__
+            temp = copy.deepcopy(obj.__dict__)
             temp['courseName'] = courseDescriptor2Name(temp['courseDescriptor'])
-            pass
-        elif isinstance(obj, DATE):
+            temp.pop('_sa_instance_state')
+            return temp
+        elif isinstance(obj, date):
             return str(obj)
-        elif isinstance(obj, DATETIME):
+        elif isinstance(obj, datetime):
             return str(obj)
-        elif isinstance(obj, TIME):
+        elif isinstance(obj, timedelta):
             return str(obj)
         else:
             pass
 
 
 def courseDescriptor2Name(sha):
-    stmt = select(Course.courseName).where(Course.courseDescriptor == sha)
-    return session.execute(stmt).fetchone()
+    return session.query(Course.courseName).filter(Course.courseDescriptor == sha).all()[0][0]
 
 
 Engine = create_engine("mysql+pymysql://root:Gdnuebdang0517666@127.0.0.1:3306/tp", encoding="utf-8")
 Session = sessionmaker(bind=Engine)
 session = Session()
+# Base.metadata.drop_all(Engine)
 # Base.metadata.create_all(Engine)
