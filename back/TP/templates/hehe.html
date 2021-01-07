@@ -12,6 +12,9 @@
         <br><br>
         <input type="submit" value="Submit" id='testbtn'>
     </form>
+    <br>
+    <button id="get">get</button>
+    <img id="imgtest">
 </head>
 <script src="../static/jquery-3.5.1.js"></script>
 <script src="../static/jquery-3.5.1.min.js"></script>
@@ -24,14 +27,14 @@
             event.preventDefault();
             $.post({
                 //给哪个页面发送网络请求  url取  域名后面的所有东西
-                {#'url': '/loginValidness',  //passed.#}
-                'url':'/modifyInfo',
+                // {#'url': '/loginValidness',#}
+                'url': '/modifyInfo',
                 //data是发送过去的数据s
                 'data': {
                     'userName': $('#userName').val(),
                     'passWD': 'caobao123',
-                    'type':'ins',
-                    'nickName':'灿宝宝'
+                    'type': 'ins',
+                    'nickName': '灿宝宝'
 
                 },
                 //如果网络请求发送成功，就会执行success里面的函数
@@ -50,8 +53,20 @@
                     }
             })
         })
+
+    });
+
+    $(function () {
+        $("#get").click(function () {
+            $.get({
+                'url': '/hotCourse',
+                'data': {'page': 0,'num':2},
+                'success': function (response) {
+                    console.log(response)
+                }
+            })
+        })
     })
-    ;
 </script>
 
 <body>
