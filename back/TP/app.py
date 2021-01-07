@@ -2,11 +2,11 @@ from flask import Flask, request, make_response, send_from_directory, url_for
 from Classes import Base, Engine, select, PUser, Teacher, Student, Course, Manage, Homework, HandInHomework, Reference, \
     HandInHomework, session, TA, MyJSONEncoder, courseDescriptor2Name
 import json
-
+import os
 from flask import render_template
 
-filePath = './static'
 app = Flask(__name__)
+filePath = './static'
 
 
 # app.debug = True
@@ -17,12 +17,12 @@ def welcome():
     return render_template('hehe.html')
 
 
-# test , passed!
-@app.route('/loginValidness', methods=['POST'])
+# 登陆验证
+@app.route('/loginValidness', methods=['GET'])
 def loginValidness():
-    userName = request.form['userName']
-    passWD = request.form['passWD']
-    type = request.form['type']
+    userName = request.args.get('userName')
+    passWD = request.args.get('passWD')
+    type = request.args.get('type')
     stmt = f'select * from puser where userName = "{userName}" and passWD = "{passWD}"'
     resultSet = session.execute(stmt)
     match = 1 if resultSet.rowcount else 0
@@ -42,7 +42,7 @@ def loginValidness():
             identity = 1 if resultSet.rowcount else 0
         else:
             pass
-    return json.dumps({'match': match, 'identity': identity}, indent=2)
+    return json.dumps({'match': match, 'identity': identity}, indent=2, ensure_ascii=False)
 
 
 '''
@@ -50,11 +50,11 @@ after login :
 '''
 
 
-# test , passed!
-@app.route('/userInfo', methods=['POST'])
+# 获取某个用户信息
+@app.route('/userInfo', methods=['GET'])
 def userInfo():
-    userName = request.form['userName']
-    type = request.form['type']
+    userName = request.args.get('userName')
+    type = request.args.get('type')
     if type == 'stu':
         res = session.query(Student).filter(Student.userName == userName).all()
         stu = res[0]
@@ -68,9 +68,10 @@ def userInfo():
         ta = res[0]
         return json.dumps(ta, cls=MyJSONEncoder, indent=2, ensure_ascii=False)
     else:
-        return json.dumps({'state': 404})
+        return json.dumps({'state': 404}, indent=2, ensure_ascii=False)
 
 
+# 修改某个用户个人信息
 @app.route('/modifyInfo', methods=['POST'])
 def modifyInfo():
     userName = request.form['userName']
@@ -85,16 +86,16 @@ def modifyInfo():
             stmt = f'update puser set puser.passWD = "{passWD}" where puser.userName = "{userName}"'
             session.execute(stmt)
             session.commit()
-        return json.dumps({'state': 200})
+        return json.dumps({'state': 200}, indent=2, ensure_ascii=False)
     except:
-        return json.dumps({'state': 404})
+        return json.dumps({'state': 404}, indent=2, ensure_ascii=False)
 
 
-# test , passed!
-@app.route('/todolist', methods=['POST'])
+# 获取某人的待办列表
+@app.route('/todolist', methods=['GET'])
 def todolist():
-    userName = request.form['userName']
-    type = request.form['type']
+    userName = request.args.get('userName')
+    type = request.args.get('type')
     if type == 'stu':
         # 学生只回传作业列表
         stmt = f'select homeworkTitle,homework.startTime,homework.endTime,courseName from homework,participation,course where participation.studentUsername = "{userName}"'
@@ -117,12 +118,13 @@ def todolist():
                   for i in res]
         return json.dumps(todols, cls=MyJSONEncoder, indent=2, ensure_ascii=False)
     else:
-        return json.dumps({'state': 404})
+        return json.dumps({'state': 404}, indent=2, ensure_ascii=False)
 
 
-@app.route('/manageCourse', methods=['POST'])
+# 老师/助教查看管理的课程
+@app.route('/manageCourse', methods=['GET'])
 def manageCourse():
-    userName = request.form['userName']
+    userName = request.args.get('userName')
     stmt = f'SELECT courseDescriptor,courseName FROM course NATURAL JOIN manage WHERE manage.userName = "{userName}"'
     res = session.execute(stmt)
     course_list = [
@@ -131,9 +133,10 @@ def manageCourse():
     return json.dumps(course_list, cls=MyJSONEncoder, indent=2, ensure_ascii=False)
 
 
-@app.route('/studyCourse', methods=['POST'])
+# 学生查看学习的课程
+@app.route('/studyCourse', methods=['GET'])
 def studyCourse():
-    userName = request.form['userName']
+    userName = request.args.get('userName')
     stmt = f'SELECT courseDescriptor,courseName FROM course NATURAL JOIN participation WHERE participation.studentUserName = "{userName}"'
     res = session.execute(stmt)
     course_list = [
@@ -141,31 +144,79 @@ def studyCourse():
         res]
     return json.dumps(course_list, cls=MyJSONEncoder, indent=2, ensure_ascii=False)
 
-
+# 获取文件的url
 @app.route('/fetchFile', methods=['GET'])
 def fetchFile():
     type = request.args.get('type')
-    fileName = None
-    if type == 1:
-        fileName = request.args.get('fileName')
-        return send_from_directory(filePath, fileName, as_attachment=True)
-    elif type == 2:
-        courseDes = request.args.get('fileName')
-        stmt = select(Course.Image).where(Course.courseDescriptor == courseDes)
-        res = session.execute(stmt)
-        if len(res):
-            fileName = res.fetchone()
-        else:
-            pass  # no file found
-        return send_from_directory(filePath, fileName, as_attachment=True) if fileName is not None else json.dumps(
-            {'state': 404})
-    elif type == 3:
-        fileName = request.args.get('fileName')
-        return send_from_directory(filePath, fileName) if fileName is not None else json.dumps({'state': 404})
+    if type == '1':
+        userName = request.args.get('userName')
+        append = session.query(PUser.portrait).filter(PUser.userName == userName).all()[0][0]
+        return json.dumps({'url': filePath + '/' + userName + '.' + append}, indent=2, ensure_ascii=False)
+    elif type == '2':
+        courseDescriptor = request.args.get('courseDescriptor')
+        append = session.query(Course.Image).filter(Course.courseDescriptor == courseDescriptor).all()[0][0]
+        return json.dumps({'url': filePath + '/' + courseDescriptor + '.' + append}, indent=2,
+                          ensure_ascii=False)
+    elif type == '3':
+        file = request.args.get('file')
+        append = session.query(HandInHomework.fileName).filter(HandInHomework.file == file).all()[0][0]
+        return json.dumps({'url': filePath + r'/' + file + '.' + append.split('.')[1]}, indent=2, ensure_ascii=False)
+    elif type == '4':
+        file = request.args.get('file')
+        append = session.query(Reference.referenceName).filter(Reference.file == file).all()[0][0]
+        return json.dumps({'url': filePath + r'/' + file + '.' + append.split('.')[1]}, indent=2, ensure_ascii=False)
     else:
         # unexpected type
         pass
     return json.dumps({'state': 404})
+
+# 获取某门课程的布置过的所有作业列表
+@app.route('/homeworkList', methods=['GET'])
+def homeworkList():
+    courseDescriptor = request.args.get('courseDescriptor')
+    res = session.query(Homework.homeworkTitle, Homework.homeworkContent, Homework.startTime, Homework.endTime).filter(
+        Homework.courseDescriptor == courseDescriptor).all()
+    res_list = [{'homeworkTitle': i[0], 'homeworkContent': i[1], 'startTime': i[2], 'endTime': i[3]} for i in res]
+    return json.dumps(res_list, cls=MyJSONEncoder, indent=2, ensure_ascii=False)
+
+# 获取某门课程某个作业的学生提交文件列表
+@app.route('/handinList')
+def handinList():
+    courseDescriptor = request.args.get('courseDescriptor')
+    hwName = request.args.get('homeworkName')
+    res = session.query(HandInHomework.file, HandInHomework.fileName, HandInHomework.handInTime,
+                        HandInHomework.submitUserName).filter(
+        HandInHomework.courseDescriptor == courseDescriptor and HandInHomework.homeworkTitle == hwName).all()
+    res_list = [{'file': i[0], 'fileName': i[1], 'handInTime': i[2], 'submitUserName': i[3]} for i in res]
+    return json.dumps(res_list, cls=MyJSONEncoder, indent=2, ensure_ascii=False)
+
+# 获取某课程课件列表
+@app.route('/courseReference', methods=['GET'])
+def courseReference():
+    courseDescriptor = request.args.get('courseDescriptor')
+    res = session.query(Reference.referenceName, Reference.downloadable, Reference.upLoadTime).filter(
+        Reference.courseDescriptor == courseDescriptor).all()
+    res_list = [{'referenceName': i[0], 'downloadable': i[1], 'upLoadTime': i[2]} for i in res]
+    return json.dumps(res_list, cls=MyJSONEncoder, indent=2, ensure_ascii=False)
+
+# 获取热门课程
+@app.route('/hotCourse', methods=['GET'])
+def hotCourse():
+    page = int(request.args.get('page'))
+    # 从0开始编号
+    num = int(request.args.get('num'))
+    stmt = 'SELECT distinct  course.courseDescriptor,course.credit, course.Image,course.courseName,course.semester,course.courseStart,course.courseEnd from course WHERE course.hotIndex > 4'
+    res = session.execute(stmt)
+    hotCourse = []
+    for i, each in enumerate(res):
+        if (page + 1) * num > i:
+            hotCourse.append(
+                {'courseDescriptor': each[0], 'credit': float(each[1]), 'Image': filePath + '/' + each[0] + '.' + each[2],
+                 'courseName': each[3], 'semester': each[4], 'courseStart': each[5], 'courseEnd': each[6]})
+        elif (page + 1) * num == i:
+            return json.dumps(hotCourse, cls=MyJSONEncoder, indent=2, ensure_ascii=False)
+    return json.dumps(hotCourse, cls=MyJSONEncoder, indent=2, ensure_ascii=False)
+
 
 
 if __name__ == '__main__':
