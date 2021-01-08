@@ -6,7 +6,7 @@ CREATE TABLE PUser(
 							userName								VARCHAR(100) PRIMARY KEY,
 							nickName								VARCHAR(100),
 							passWD									VARCHAR(256),
-							portrait      							VARCHAR(256)//上传的头像文件的拓展名，如.jpg
+							portrait      							VARCHAR(256)
 );
 
 
@@ -30,13 +30,13 @@ CREATE TABLE Student(
 );
 
 CREATE TABLE TA (
-							user	Name  								VARCHAR(100) ,
+							userName  								VARCHAR(100) ,
 							teacherId								char(10) not NULL,
 							courseDescriptor    					VARCHAR(256),
 							PRIMARY KEY(userName,courseDescriptor),
 							FOREIGN KEY(userName) REFERENCES puser(userName),
 							FOREIGN KEY (courseDescriptor) REFERENCES course(courseDescriptor),
-							FOREIGN KEY (teacher) REFERENCES teacher(id)
+							FOREIGN KEY (teacherId) REFERENCES teacher(id)
 );
 
 CREATE TABLE Course(
@@ -50,7 +50,7 @@ CREATE TABLE Course(
 							courseStart 							TIME NOT NULL,
 							courseEnd 								TIME NOT NULL,
 							hotIndex 								INT,
-							Image 									VARCHAR(256),//数据库里存的是上传头像文件的拓展名，如.jpg
+							Image 									VARCHAR(256),
 							description 							VARCHAR(1000)
 );
 
@@ -98,9 +98,9 @@ CREATE TABLE HandInHomework(
 							grades 									NUMERIC(5,2),
 							handInTime 								DATETIME,
 						    fileName								VARCHAR(256) NOT NULL,
-    						//数据库中存的是上传的文件名
+    						
 							file 									VARCHAR(256) NOT NULL,
-    						//对于file，数据库里存的是submitUserName+fileName+handInTime拼接在一起，然后sha256
+    						
 							courseDescriptor 						VARCHAR(256),
 							homeworkTitle 							VARCHAR(100),
 							PRIMARY KEY (submitUserName,handInTime),
@@ -111,9 +111,9 @@ CREATE TABLE HandInHomework(
 
 CREATE TABLE Reference (
 							referenceName 							varchar(256),
-        					//数据库中存的是上传的文件名
+        					
 						    file									VARCHAR(256),
-    						//对于file，数据库里存的是referenceName+uploadTime+courseDescritor拼接在一起，然后sha256
+    						
 							uploadTime 								DATETIME,
 							downloadable 							bit(1),#0 for disabled
 							courseDescriptor 						VARCHAR(256),

@@ -46,6 +46,9 @@ INSERT INTO `tp`.`handinhomework`(`submitUserName`, `gradeUserName`, `grades`, `
 
 INSERT INTO `tp`.`notification`(`content`, `createTime`, `creatorUsername`, `courseDescriptor`) VALUES ('大家注意要按时交作业！', '2020-11-01 15:39:00', 'ZHANGsan', '589b51e8b8790cb67fb0245edb9b03fdcce0c81265e46d945ddf743eb22003d7');
 
-INSERT INTO `tp`.`reference`(`referenceName`, `file`, `upLoadTime`, `downloadable`, `courseDescriptor`) VALUES ('JAVA learning.pptx', '0493f3740c839681f32ef8a540f521d0545b2579a993e6f111d277202f2d1c42', '2020-09-30 10:30:00', b'1', '589b51e8b8790cb67fb0245edb9b03fdcce0c81265e46d945ddf743eb22003d7');
+INSERT INTO `tp`.`participation`(`studentUsername`, `courseDescriptor`, `finalGrade`, `signInTime`) VALUES ('CAIcy', 'b511a2ad3dbab9e1ba0213e6416800598c67790008a92366831a087a84f67e21', 4.80, '2020-12-20 18:24:00');
+INSERT INTO `tp`.`participation`(`studentUsername`, `courseDescriptor`, `finalGrade`, `signInTime`) VALUES ('HUyf', 'b1bf657ea7c51a265825d020890cce783e8ffa414e4cc11b77e57286f237e8c7', 4.20, '2019-09-01 23:23:00');
+INSERT INTO `tp`.`participation`(`studentUsername`, `courseDescriptor`, `finalGrade`, `signInTime`) VALUES ('LIUxm', '589b51e8b8790cb67fb0245edb9b03fdcce0c81265e46d945ddf743eb22003d7', 3.30, '2020-09-11 13:15:00');
+
 ```
 
