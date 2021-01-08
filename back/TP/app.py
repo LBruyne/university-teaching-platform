@@ -1,10 +1,13 @@
-from flask import Flask, request, make_response, send_from_directory, url_for
+import hashlib
+from flask import Flask, request, make_response, send_from_directory, url_for, flash, redirect
+from flask_cors import CORS
+from werkzeug.utils import secure_filename
+
 from Classes import Base, Engine, select, PUser, Teacher, Student, Course, Manage, Homework, HandInHomework, Reference, \
     HandInHomework, session, TA, MyJSONEncoder, courseDescriptor2Name
 import json
 import os
 from flask import render_template
-from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
@@ -146,6 +149,7 @@ def studyCourse():
         res]
     return json.dumps(course_list, cls=MyJSONEncoder, indent=2, ensure_ascii=False)
 
+
 # 获取文件的url
 @app.route('/fetchFile', methods=['GET'])
 def fetchFile():
@@ -172,6 +176,7 @@ def fetchFile():
         pass
     return json.dumps({'state': 404})
 
+
 # 获取某门课程的布置过的所有作业列表
 @app.route('/homeworkList', methods=['GET'])
 def homeworkList():
@@ -180,6 +185,7 @@ def homeworkList():
         Homework.courseDescriptor == courseDescriptor).all()
     res_list = [{'homeworkTitle': i[0], 'homeworkContent': i[1], 'startTime': i[2], 'endTime': i[3]} for i in res]
     return json.dumps(res_list, cls=MyJSONEncoder, indent=2, ensure_ascii=False)
+
 
 # 获取某门课程某个作业的学生提交文件列表
 @app.route('/handinList')
@@ -192,6 +198,7 @@ def handinList():
     res_list = [{'file': i[0], 'fileName': i[1], 'handInTime': i[2], 'submitUserName': i[3]} for i in res]
     return json.dumps(res_list, cls=MyJSONEncoder, indent=2, ensure_ascii=False)
 
+
 # 获取某课程课件列表
 @app.route('/courseReference', methods=['GET'])
 def courseReference():
@@ -200,6 +207,7 @@ def courseReference():
         Reference.courseDescriptor == courseDescriptor).all()
     res_list = [{'referenceName': i[0], 'downloadable': i[1], 'upLoadTime': i[2]} for i in res]
     return json.dumps(res_list, cls=MyJSONEncoder, indent=2, ensure_ascii=False)
+
 
 # 获取热门课程
 @app.route('/hotCourse', methods=['GET'])
@@ -213,12 +221,136 @@ def hotCourse():
     for i, each in enumerate(res):
         if (page + 1) * num > i:
             hotCourse.append(
-                {'courseDescriptor': each[0], 'credit': float(each[1]), 'Image': filePath + '/' + each[0] + '.' + each[2],
+                {'courseDescriptor': each[0], 'credit': float(each[1]),
+                 'Image': filePath + '/' + each[0] + '.' + each[2],
                  'courseName': each[3], 'semester': each[4], 'courseStart': each[5], 'courseEnd': each[6]})
         elif (page + 1) * num == i:
             return json.dumps(hotCourse, cls=MyJSONEncoder, indent=2, ensure_ascii=False)
     return json.dumps(hotCourse, cls=MyJSONEncoder, indent=2, ensure_ascii=False)
 
+
+# 获取课程详情 tested pass!
+@app.route('/courseInfo', methods=['POST'])
+def courseInfo():
+    courseDes = request.form['courseDes']
+    stmt = f'select courseId, courseName, credit, semester, startTime, endTime, courseStart, courseEnd from course where course.courseDescriptor = "{courseDes}"'
+    res = session.execute(stmt)
+    courseinfo_list = [
+        {'课程号': i[0], '课程名称': i[1], '课程学分': float(i[2]), '课程学期': i[3], '课程开始时间': i[4], '课程结束时间': i[5], '上课时间': i[6],
+         '下课时间': i[7]} for i in
+        res]
+    return json.dumps(courseinfo_list, cls=MyJSONEncoder, indent=2, ensure_ascii=False)
+
+
+# 上传文件(学生上传作业,老师助教上传资料,上传课程头像,上传用户头像)
+@app.route('/uploadfile', methods=['POST'])
+def uploadfile():
+    type = request.form['type']
+    saveFlag = False
+    if request.method == 'POST':
+        f = request.files['file']
+
+        if f:
+            filename = f.filename
+            types = ['jpg', 'png', 'pdf', 'doc']
+            if filename.split('.')[-1] in types:
+                uploadpath = os.path.join(app.root_path, 'static', filename)
+                f.save(uploadpath)
+                saveFlag = True
+            else:
+                saveFlag = False
+    else:
+        saveFlag = False
+
+        # 课件资料
+    if type == 'ins' or type == 'ta':
+        refname = request.form['refname']
+        userName = request.form['userName']
+        courseDescriptor = request.form['courseDescriptor']
+        s = hashlib.sha256()
+        s.update(refname + userName + courseDescriptor)
+        shafile = s.hexdigest()
+        datetime = request.form['datetime']
+        downloadable = request.form['downloadable']
+        stmt = f'insert into Reference values({refname}, {shafile}, {datetime}, {downloadable}, {courseDescriptor})'
+        res = session.execute(stmt)
+        if res and saveFlag:
+            return json.dumps({'state': 200}, indent=2, ensure_ascii=False)
+        else:
+            return json.dumps({'state': 404}, indent=2, ensure_ascii=False)
+    # 学生作业
+    elif type == 'stu':
+        userName = request.form['userName']
+        handintime = request.form['handintime']
+        hwname = request.form['hwname']
+        title = request.form['title']
+        courseDescriptor = request.form['courseDescriptor']
+        s = hashlib.sha256()
+        s.update(hwname + userName + title + courseDescriptor)
+        shafile = s.hexdigest()
+        # 批改人和作业得分先设为0，批改后直接update上去
+        stmt = f'insert into Reference values("{userName}", "N", 0, "{handintime}", "{hwname}", "{shafile}", "{courseDescriptor}", "{title}")'
+        res = session.execute(stmt)
+        if res and saveFlag:
+            return json.dumps({'state': 200}, indent=2, ensure_ascii=False)
+        else:
+            return json.dumps({'state': 404}, indent=2, ensure_ascii=False)
+
+    # 课程头像
+    elif type == 'course':
+        courseDescriptor = request.form['courseDescriptor']
+        image = f.filename.split('.')[-1]
+        stmt = f'update Course set Image = {image} where courseDescriptor = "{courseDescriptor}"'
+        res = session.execute(stmt)
+        if res and saveFlag:
+            return json.dumps({'state': 200}, indent=2, ensure_ascii=False)
+        else:
+            return json.dumps({'state': 404}, indent=2, ensure_ascii=False)
+
+    # 用户头像
+    elif type == 'user':
+        userName = request.form['userName']
+        ptrait = f.filename.split('.')[-1]
+        stmt = f'update puser set portrait = {ptrait} where userName = "{userName}"'
+        res = session.execute(stmt)
+        if res and saveFlag:
+            return json.dumps({'state': 200})
+        else:
+            return json.dumps({'state': 404})
+    return json.dumps({'state': 404}, indent=2, ensure_ascii=False)
+
+
+# 老师布置作业 tested pass!
+@app.route('/assign', methods=['POST'])
+def assign():
+    courseDes = request.form['courseDes']
+    hwtitle = request.form['hwtitle']
+    starttime = request.form['starttime']
+    endtime = request.form['endtime']
+    taskDes = request.form['taskDes']
+    creatorUname = request.form['creatorUname']
+    stmt = f'insert into Homework values ("{courseDes}", "{hwtitle}", "{taskDes}", "{starttime}", "{creatorUname}", "{endtime}")'
+    res = session.execute(stmt)
+    session.commit()
+    if res:
+        return json.dumps({'state': 200})
+    else:
+        return json.dumps({'state': 404})
+
+
+# 老师批改作业 tested pass!
+@app.route('/rating', methods=['POST'])
+def rating():
+    uname = request.form['uname']
+    grade = request.form['grade']
+    filename = request.form['filename']
+    stmt = f'update HandInHomework set gradeUserName = "{uname}", grades = "{grade}" where HandInHomework.fileName = "{filename}"'
+    res = session.execute(stmt)
+    session.commit()
+    if res:
+        return json.dumps({'state': 200})
+    else:
+        return json.dumps({'state': 404})
 
 
 if __name__ == '__main__':
