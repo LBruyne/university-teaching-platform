@@ -16,6 +16,8 @@ class WebHeader extends React.Component {
     }
 
     componentWillMount() {
+        // 从local中取得登陆状态，然后对登陆状态判断，如果是true，就更改header组件的状态
+        // 因为localStorage只能用（string，string）键值对方式存储，所以这里判断是对"true"
         let isLogin = localStorage.getItem("isLogin")
         if(isLogin=="true"){
             this.setState({
@@ -38,6 +40,7 @@ class WebHeader extends React.Component {
     }
 
     cancelState = () => {
+        // 注销数据，消除登陆状态和用户信息
         localStorage.removeItem("isLogin")
         localStorage.removeItem("username")
         localStorage.removeItem("password")

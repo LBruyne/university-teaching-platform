@@ -69,6 +69,7 @@ class Login extends Component {
                     isWrongIdentity: false,
                     visible: false // 模态窗消失
                 })
+                // 获取用户信息并存到local中
                 localStorage.setItem("isLogin", "true")
                 localStorage.setItem("username", this.state.username)
                 localStorage.setItem("password", this.state.password)
