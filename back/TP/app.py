@@ -4,8 +4,10 @@ from Classes import Base, Engine, select, PUser, Teacher, Student, Course, Manag
 import json
 import os
 from flask import render_template
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 filePath = './static'
 
 

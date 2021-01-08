@@ -6,6 +6,7 @@ import reportWebVitals from './utils/reportWebVitals';
 import './styles/entry.less'
 import './utils/icons/iconfont'
 import './styles/swiper.css';
+import 'antd/dist/antd.css'
 
 ReactDOM.render(
     <App />,
