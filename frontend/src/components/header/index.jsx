@@ -2,18 +2,11 @@ import React from 'react';
 
 import Login from '../login/index.jsx'
 
-import sxxlogo from "../../assets/images/header/sxxlogo.png"
+import sxxlogo from "../../assets/images/header/logo.png"
 
 /**
  * logo + 导航栏
  */
-
-function goto_course(){
-    window.location.href = '/user/course';
-}
-function goto_userhome(){
-    window.location.href = '/user/home';
-}
 
 class WebHeader extends React.Component {
     constructor(props){
@@ -21,6 +14,18 @@ class WebHeader extends React.Component {
         this.state={
 
         }
+    }
+
+    navigateToHot = () => {
+        window.location.href = '/home';
+    }
+
+    navigateToCourse = () => {
+        window.location.href = '/user/course';
+    }
+
+    navigateToUserhome = () => {
+        window.location.href = '/user/home';
     }
 
     render() {
@@ -31,8 +36,8 @@ class WebHeader extends React.Component {
                     <img src={sxxlogo}/>
                 </div>
                 <div className="header-ul">
-                    <li>热门课程</li>
-                    <li onClick={goto_course}>
+                    <li onClick={this.navigateToHot}>热门课程</li>
+                    <li onClick={this.navigateToCourse}>
                         我的课程
                     </li>
                     <li>个人信息</li>

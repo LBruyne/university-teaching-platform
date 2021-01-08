@@ -9,17 +9,12 @@ class Login extends Component {
         tabStatus:'login',
         username: "",
         password: "",
+        isLogin: false
     };
 
     showModal = () => {
         this.setState({
             visible: true,
-        });
-    };
-
-    handleOk = e => {
-        this.setState({
-            visible: false,
         });
     };
 
@@ -48,9 +43,8 @@ class Login extends Component {
     }
 
     attemptLogin = () => {
-        console.log(this.state.username)
-        console.log(this.state.password)
-        console.log(this.state.type)
+        // 模态窗消失
+        this.state.visible = false;
 
         let url = "http://localhost:5000/loginValidness?" + "userName=" + this.state.username + "&" +
             "passWD=" + this.state.password + "&" + "type=" + this.state.type
@@ -61,13 +55,26 @@ class Login extends Component {
                 mode: "cors",
             }
         )
-
         .then(response => response.json())
             .then(data => {
             console.log(data);
+            if(data["identity"] == true && data["match"] == true) {
+                this.setState({
+                    isLogin: true
+                })
+                console.log(this.state.isLogin)
+            }
+            else {
+                this.setState({
+                    isLogin: false
+                })
+                console.log(this.state.isLogin)
+            }
         }).catch(function (e) {
             console.log(e);
         });
+
+
     }
 
     render() {
@@ -76,7 +83,6 @@ class Login extends Component {
             <div className='login-container'>
                 <Modal
                     visible={this.state.visible}
-                    onOk={this.handleOk}
                     onCancel={this.handleCancel}
                     footer={null}
                     className='login-modal'

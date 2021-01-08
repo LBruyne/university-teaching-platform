@@ -6,7 +6,6 @@ import footer from '../../assets/images/footer/a9.png'
  */
 class WebFooter extends Component {
 
-
     render() {
 
         return (
