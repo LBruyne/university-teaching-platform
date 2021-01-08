@@ -31,12 +31,12 @@ class WebHeader extends React.Component {
         window.location.href = '/home';
     }
 
-    navigateToCourse = () => {
-        window.location.href = '/user/course';
-    }
-
     navigateToUserhome = () => {
         window.location.href = '/user/home';
+    }
+
+    navigateToUserInfo = () => {
+        window.location.href = '/user/setting';
     }
 
     cancelState = () => {
@@ -59,16 +59,18 @@ class WebHeader extends React.Component {
                     <li onClick={this.navigateToHot}>热门课程</li>
                     {this.state.isLogin==true&&
                     <div>
-                        <li onClick={this.navigateToCourse}>我的课程</li>
-                        <li>个人信息</li>
+                        <li onClick={this.navigateToUserhome}>我的课程</li>
                     </div>}
-                    <li>专栏</li>
+                    {this.state.isLogin==true&&
+                    <div>
+                        <li onClick={this.navigateToUserInfo}>个人信息</li>
+                    </div>}
                     <li>文章</li>
                     <li>手记</li>
                 </div>
+
                 <div className="header-input">
                     <input type="text"
-
                     />
                     <div className={"input-search"}>
                         <svg className='icon-svg'>
@@ -76,6 +78,7 @@ class WebHeader extends React.Component {
                         </svg>
                     </div>
                 </div>
+
                 {this.state.isLogin==false&&
                 <div className="header-right">
                     <Login ref={node => this.login = node}/>
@@ -102,6 +105,7 @@ class WebHeader extends React.Component {
                     }>注销
                     </div>
                 </div>}
+
             </div>
         )
 
