@@ -2,17 +2,26 @@ import React from 'react';
 
 import Login from '../login/index.jsx'
 
-import sxxlogo from "../../assets/images/header/logo.png"
+import logo from "../../assets/images/header/logo.png"
 
 /**
  * logo + 导航栏
  */
 
 class WebHeader extends React.Component {
-    constructor(props){
-        super(props)
-        this.state={
 
+    state = {
+        isLogin: false,
+        username: ""
+    }
+
+    componentWillMount() {
+        let isLogin = localStorage.getItem("isLogin")
+        if(isLogin=="true"){
+            this.setState({
+                isLogin: true,
+                username: localStorage.getItem("username")
+            })
         }
     }
 
@@ -28,19 +37,28 @@ class WebHeader extends React.Component {
         window.location.href = '/user/home';
     }
 
+    cancelState = () => {
+        localStorage.removeItem("isLogin")
+        localStorage.removeItem("username")
+        localStorage.removeItem("password")
+        localStorage.removeItem("type")
+        this.navigateToHot()
+    }
+
     render() {
 
         return (
             <div className="header-container">
                 <div className="header-logo">
-                    <img src={sxxlogo}/>
+                    <img src={logo}/>
                 </div>
                 <div className="header-ul">
                     <li onClick={this.navigateToHot}>热门课程</li>
-                    <li onClick={this.navigateToCourse}>
-                        我的课程
-                    </li>
-                    <li>个人信息</li>
+                    {this.state.isLogin==true&&
+                    <div>
+                        <li onClick={this.navigateToCourse}>我的课程</li>
+                        <li>个人信息</li>
+                    </div>}
                     <li>专栏</li>
                     <li>文章</li>
                     <li>手记</li>
@@ -55,6 +73,7 @@ class WebHeader extends React.Component {
                         </svg>
                     </div>
                 </div>
+                {this.state.isLogin==false&&
                 <div className="header-right">
                     <Login ref={node => this.login = node}/>
                     <div className="header-btn login" onClick={() => {
@@ -67,8 +86,19 @@ class WebHeader extends React.Component {
 
                     }}>注册
                     </div>
-
-                </div>
+                </div>}
+                {this.state.isLogin==true&&
+                <div className="header-right">
+                    <Login ref={node => this.login = node}/>
+                    <div className="header-btn login" >
+                        欢迎，{this.state.username}
+                    </div>
+                    <div className='btn-line'>/</div>
+                    <div className="header-btn register" onClick={
+                        this.cancelState
+                    }>注销
+                    </div>
+                </div>}
             </div>
         )
 

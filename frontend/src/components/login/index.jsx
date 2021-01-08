@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Modal, Select} from 'antd'
+import {Modal, Select, Tag} from 'antd'
 
 const { Option } = Select;
 
@@ -9,7 +9,9 @@ class Login extends Component {
         tabStatus:'login',
         username: "",
         password: "",
-        isLogin: false
+        isWrongIdentity: false,
+        isLogin: false,
+        type: ""
     };
 
     showModal = () => {
@@ -18,9 +20,14 @@ class Login extends Component {
         });
     };
 
+    navigateToUserhome = () => {
+        window.location.href = '/user/home';
+    }
+
     handleCancel = e => {
         this.setState({
             visible: false,
+            isWrongIdentity: false
         });
     };
 
@@ -43,8 +50,6 @@ class Login extends Component {
     }
 
     attemptLogin = () => {
-        // 模态窗消失
-        this.state.visible = false;
 
         let url = "http://localhost:5000/loginValidness?" + "userName=" + this.state.username + "&" +
             "passWD=" + this.state.password + "&" + "type=" + this.state.type
@@ -57,28 +62,33 @@ class Login extends Component {
         )
         .then(response => response.json())
             .then(data => {
-            console.log(data);
+
             if(data["identity"] == true && data["match"] == true) {
                 this.setState({
-                    isLogin: true
+                    isLogin: true,
+                    isWrongIdentity: false,
+                    visible: false // 模态窗消失
                 })
-                console.log(this.state.isLogin)
+                localStorage.setItem("isLogin", "true")
+                localStorage.setItem("username", this.state.username)
+                localStorage.setItem("password", this.state.password)
+                localStorage.setItem("type", this.state.type)
+                this.navigateToUserhome()
             }
             else {
                 this.setState({
-                    isLogin: false
+                    isLogin: false,
+                    isWrongIdentity: true
                 })
                 console.log(this.state.isLogin)
             }
         }).catch(function (e) {
             console.log(e);
         });
-
-
     }
 
     render() {
-        let {tabStatus}=this.state
+        let {tabStatus, isWrongIdentity}=this.state
         return (
             <div className='login-container'>
                 <Modal
@@ -104,7 +114,8 @@ class Login extends Component {
                             </div>
                         </div>
 
-                        {tabStatus=='login'&&<div className="login-box">
+                        {tabStatus=='login'&&
+                        <div className="login-box">
                             <div className="modal-input">
                                 <div className="input-box">
                                     <input onChange={this.handleUsernameChange.bind(this)} type="text" placeholder='请输入用户名' />
@@ -129,6 +140,11 @@ class Login extends Component {
                                         <Option value="ta">助教</Option>
                                     </Select>,
                                 </div>
+
+                                {isWrongIdentity==true&&
+                                <div style={{ marginTop:16 }}>
+                                    <Tag color="#f50">账号或密码错误</Tag>
+                                </div>}
 
                                 <div className="input-bottom">
                                     <div className="autoLogin"><input type="checkbox"/>7天内自动登录</div>
@@ -156,7 +172,6 @@ class Login extends Component {
                                     <use xlinkHref='#iconerweima'></use>
                                 </svg>
                             </div>
-
                         </div>}
                         {tabStatus=='register'&&<div className="register-box">
                             <div className="modal-input">
