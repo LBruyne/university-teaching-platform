@@ -56,18 +56,22 @@ class StuHome extends React.Component{
     get_courses(){
         let courses = [
             {
+                'id': 1,
                 'name': '软件需求工程',
                 'info': '',
             },
             {
+                'id': 2,
                 'name': '软件工程管理',
                 'info': '',
             },
             {
+                'id': 3,
                 'name': '软件质量测试与保证',
                 'info': '',
             },
             {
+                'id': 4,
                 'name': '服务科学导论',
                 'info': '',
             },
@@ -78,7 +82,7 @@ class StuHome extends React.Component{
                     <li class={'course-item'}
                         key={item}
                         onClick={()=>{
-                            window.location.href = '/user/course?course='+item['name']
+                            window.location.href = '/user/course?course='+item['id']
                         }}
                     >
                         {item['name']}</li>
