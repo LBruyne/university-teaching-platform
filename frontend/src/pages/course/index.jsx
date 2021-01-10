@@ -19,6 +19,57 @@ class CoursePage extends React.Component{
             contentFlag: flag
         })
     }
+    get_url_param(p){
+        let url = window.location.href;
+        if(url.split('?').length < 1)
+            return '';
+        let params = url.split('?')[1].split('&');
+        for(let i=0; i<params.length; i++){
+            let param = params[i].split('=');
+            if(param != null && param[0] === p){
+                return param[1];
+            }
+        }
+        return '';
+    }
+    get_course_info(){
+        let c_name = this.get_url_param('course');
+
+    }
+    get_course(){
+        let courses = {
+            '软件需求工程': {
+                name: "软件需求工程",
+                time: "2020-2021",
+                instructor: "邢卫",
+                // eslint-disable-next-line no-multi-str
+                info: "本课程的主要任务是在软件工程整体知识的基础上，深入学习并实践软件需求获取与管理的原理、方法和过程，\
+        学习并掌握使用UML工具对软件需求进行分析、表达与系统设计。课程内容包括两部分：一是需求获取和维护的过程和方法，\
+        包括需求提取、需求分析和建模、需求表达、需求确认、需求变更控制，以及相应的工具；二是UML概念、方法和工具。\
+        课程配合案例性实践环节进行教学。通过本课程的学习，应使学生掌握如何在软件工程的实践中完成复杂软件需求的获取、\
+        表达和维护能力，学会应用UML进行软件需求分析与设计的技术和方法，为掌握软件工程的系统全面的知识和技能打下坚实基础。",
+                mtrl: [
+                    "this is a material",
+                    "this is a material",
+                    "this is a material",
+                ],
+                ntic: [
+                    "this is a notice",
+                    "this is a notice",
+                    "this is a notice",
+                    "this is a notice",
+                ],
+                asgn: [
+                    "this is a assignment",
+                    "this is a assignment",
+                    "this is a assignment",
+                    "this is a assignment",
+                    "this is a assignment",
+                ]
+            }
+        }
+
+    }
     render(){
         const style = {
             textAlign: "center",
