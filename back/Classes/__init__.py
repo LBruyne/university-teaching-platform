@@ -13,7 +13,7 @@ Base = declarative_base()
 
 
 class PUser(Base):
-    __tablename__ = 'PUser'
+    __tablename__ = 'puser'
     userName = Column(VARCHAR(100), primary_key=True)
     nickName = Column(VARCHAR(100), nullable=False)
     passWD = Column(VARCHAR(256), nullable=False)
@@ -27,9 +27,9 @@ class PUser(Base):
 
 
 class Teacher(Base):
-    __tablename__ = 'Teacher'
+    __tablename__ = 'teacher'
     id = Column(CHAR(10), primary_key=True)
-    userName = Column(VARCHAR(100), ForeignKey("PUser.userName"), nullable=False)
+    userName = Column(VARCHAR(100), ForeignKey("puser.userName"), nullable=False)
     firstName = Column(VARCHAR(50), nullable=False)
     lastName = Column(VARCHAR(50), nullable=False)
     department = Column(VARCHAR(100), nullable=False)
@@ -45,9 +45,9 @@ class Teacher(Base):
 
 
 class Student(Base):
-    __tablename__ = "Student"
+    __tablename__ = "student"
     id = Column(CHAR(10), primary_key=True)
-    userName = Column(VARCHAR(100), ForeignKey('PUser.userName'), nullable=False)
+    userName = Column(VARCHAR(100), ForeignKey('puser.userName'), nullable=False)
     major = Column(VARCHAR(100), nullable=False)
     email = Column(VARCHAR(100), nullable=False)
 
@@ -59,10 +59,10 @@ class Student(Base):
 
 
 class TA(Base):
-    __tablename__ = 'TA'
-    userName = Column(VARCHAR(100), ForeignKey('PUser.userName'), primary_key=True, nullable=False)
-    teacherId = Column(CHAR(10), ForeignKey('Teacher.id'))
-    courseDescriptor = Column(VARCHAR(256), ForeignKey('Course.courseDescriptor'),
+    __tablename__ = 'ta'
+    userName = Column(VARCHAR(100), ForeignKey('puser.userName'), primary_key=True, nullable=False)
+    teacherId = Column(CHAR(10), ForeignKey('teacher.id'))
+    courseDescriptor = Column(VARCHAR(256), ForeignKey('course.courseDescriptor'),
                               primary_key=True, nullable=False)
 
     def __init__(self, uname, i, ins, cdes):
@@ -73,7 +73,7 @@ class TA(Base):
 
 
 class Course(Base):
-    __tablename__ = "Course"
+    __tablename__ = "course"
     courseDescriptor = Column(VARCHAR(256), primary_key=True)
     courseName = Column(VARCHAR(200), nullable=False)
     courseId = Column(CHAR(20), nullable=False)
@@ -104,9 +104,9 @@ class Course(Base):
 
 
 class Manage(Base):
-    __tablename__ = "Manage"
-    userName = Column(VARCHAR(100), ForeignKey('PUser.userName'), primary_key=True, nullable=False)
-    courseDescriptor = Column(VARCHAR(256), ForeignKey('Course.courseDescriptor'), primary_key=True, nullable=False)
+    __tablename__ = "manage"
+    userName = Column(VARCHAR(100), ForeignKey('puser.userName'), primary_key=True, nullable=False)
+    courseDescriptor = Column(VARCHAR(256), ForeignKey('course.courseDescriptor'), primary_key=True, nullable=False)
     type = Column(BIT(1), nullable=False)
     newNotice = Column(BIT(1), nullable=False)
     editNotice = Column(BIT(1), nullable=False)
@@ -130,12 +130,12 @@ class Manage(Base):
 
 
 class Homework(Base):
-    __tablename__ = "Homework"
-    courseDescriptor = Column(VARCHAR(256), ForeignKey('Course.courseDescriptor'), index=True)
+    __tablename__ = "homework"
+    courseDescriptor = Column(VARCHAR(256), ForeignKey('course.courseDescriptor'), index=True)
     homeworkTitle = Column(VARCHAR(100), primary_key=True)
     homeworkContent = Column(VARCHAR(5000), nullable=False)
     startTime = Column(DATETIME, primary_key=True)
-    creatorUsername = Column(VARCHAR(100), ForeignKey('PUser.userName'), primary_key=True, nullable=False)
+    creatorUsername = Column(VARCHAR(100), ForeignKey('puser.userName'), primary_key=True, nullable=False)
     endTime = Column(DATETIME)
 
     def __init__(self, descriptor, hktitle, stime, etime, cusername, hwkcontent):
@@ -148,9 +148,9 @@ class Homework(Base):
 
 
 class Participation(Base):
-    __tablename__ = 'Participation'
-    studentUsername = Column(VARCHAR(100), ForeignKey('PUser.userName'), primary_key=True)
-    courseDescriptor = Column(VARCHAR(256), ForeignKey('Course.courseDescriptor'), primary_key=True)
+    __tablename__ = 'participation'
+    studentUsername = Column(VARCHAR(100), ForeignKey('puser.userName'), primary_key=True)
+    courseDescriptor = Column(VARCHAR(256), ForeignKey('course.courseDescriptor'), primary_key=True)
     finalGrade = Column(NUMERIC(5, 2))
     signInTime = Column(DATETIME)
 
@@ -162,15 +162,15 @@ class Participation(Base):
 
 
 class HandInHomework(Base):
-    __tablename__ = "HandInHomework"
-    submitUserName = Column(VARCHAR(100), ForeignKey('PUser.userName'), primary_key=True, nullable=False)
-    gradeUserName = Column(VARCHAR(100), ForeignKey('PUser.userName'), nullable=True)
+    __tablename__ = "handInHomework"
+    submitUserName = Column(VARCHAR(100), ForeignKey('puser.userName'), primary_key=True, nullable=False)
+    gradeUserName = Column(VARCHAR(100), ForeignKey('puser.userName'), nullable=True)
     grades = Column(NUMERIC(5, 2))
     handInTime = Column(DATETIME, primary_key=True)
     fileName = Column(VARCHAR(256), nullable=False)
     file = Column(VARCHAR(256), nullable=False)
-    courseDescriptor = Column(VARCHAR(256), ForeignKey('Course.courseDescriptor'), nullable=False)
-    homeworkTitle = Column(VARCHAR(100), ForeignKey('Homework.homeworkTitle'), nullable=False)
+    courseDescriptor = Column(VARCHAR(256), ForeignKey('course.courseDescriptor'), nullable=False)
+    homeworkTitle = Column(VARCHAR(100), ForeignKey('homework.homeworkTitle'), nullable=False)
 
     def __init__(self, susername, gusername, grade, hdintime, fil, descriptor, hwtitle, filen):
         self.submitUserName = susername
@@ -184,12 +184,12 @@ class HandInHomework(Base):
 
 
 class Reference(Base):
-    __tablename__ = "Reference"
+    __tablename__ = "reference"
     referenceName = Column(VARCHAR(100), nullable=False)
     file = Column(VARCHAR(256), nullable=False)
     upLoadTime = Column(DATETIME, primary_key=True)
     downloadable = Column(BIT(1), nullable=False)
-    courseDescriptor = Column(VARCHAR(256), ForeignKey('Course.courseDescriptor'), primary_key=True, nullable=False)
+    courseDescriptor = Column(VARCHAR(256), ForeignKey('course.courseDescriptor'), primary_key=True, nullable=False)
 
     def __init__(self, rename, uptime, candownload, descritpor):
         self.referenceName = rename
@@ -199,11 +199,11 @@ class Reference(Base):
 
 
 class Notification(Base):
-    __tablename__ = 'Notification'
+    __tablename__ = 'notification'
     content = Column(VARCHAR(1000))
     createTime = Column(DATETIME, primary_key=True)
-    creatorUsername = Column(VARCHAR(100), ForeignKey('Manage.userName'), primary_key=True)
-    courseDescriptor = Column(VARCHAR(256), ForeignKey('Course.courseDescriptor'), primary_key=True)
+    creatorUsername = Column(VARCHAR(100), ForeignKey('manage.userName'), primary_key=True)
+    courseDescriptor = Column(VARCHAR(256), ForeignKey('course.courseDescriptor'), primary_key=True)
 
     def __init__(self, ctnt, ctime, ctor, cdes):
         self.content = ctnt
@@ -213,9 +213,9 @@ class Notification(Base):
 
 
 class Complain(Base):
-    __tablename__ = 'Complain'
-    studentUsername = Column(VARCHAR(100), ForeignKey('PUser.userName'), primary_key=True, nullable=False)
-    courseDescriptor = Column(VARCHAR(256), ForeignKey('Course.courseDescriptor'))
+    __tablename__ = 'complain'
+    studentUsername = Column(VARCHAR(100), ForeignKey('puser.userName'), primary_key=True, nullable=False)
+    courseDescriptor = Column(VARCHAR(256), ForeignKey('course.courseDescriptor'))
     handInTime = Column(DATETIME, primary_key=True)
     reason = Column(VARCHAR(1000))
 
@@ -297,7 +297,7 @@ def courseDescriptor2Name(sha):
     return session.query(Course.courseName).filter(Course.courseDescriptor == sha).all()[0][0]
 
 
-Engine = create_engine("mysql+pymysql://root:Gdnuebdang0517666@127.0.0.1:3306/tp", encoding="utf-8")
+Engine = create_engine("mysql+pymysql://tp:teaching@www.neohugh.art:3306/tp", encoding="utf-8")
 Session = sessionmaker(bind=Engine)
 session = Session()
 # Base.metadata.drop_all(Engine)
