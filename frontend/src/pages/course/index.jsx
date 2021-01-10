@@ -1,5 +1,4 @@
 import React from 'react';
-
 import StuCourse from "./stu-course";
 import TchCourse from "./tch-course";
 import TaCourse from "./ta-course";
@@ -9,7 +8,7 @@ class CoursePage extends React.Component{
         super(props);
 
         this.state = {
-            utype: 'tch',
+            utype: 'stu',
         }
     }
 

@@ -90,6 +90,7 @@ class StuHome extends React.Component{
             </div>
         );
     }
+
     render(){
         return (
             <div class="uhp">
@@ -99,7 +100,10 @@ class StuHome extends React.Component{
                         <div>{this.get_name()}</div>
                     </div>
                     <div class={"menu"}>
-                        <div class={"item"}>学习笔记</div>
+                        <div class={"item"}
+                        onClick={()=>{
+                            window.location.href = '/user/home/notes';
+                        }}>学习笔记</div>
                         <div class={"item"}>公告</div>
                     </div>
                 </div>

@@ -8,6 +8,8 @@ import HomePage from "../pages/home";
 import UserInfoPage from "../pages/userinfo";
 import CoursePage from "../pages/course";
 import UserHomePage from "../pages/userhome";
+import Homework from "../pages/course/homework";
+import Notes from '../pages/userhome/notes';
 
 /**
  * 网页路由组件
@@ -31,8 +33,10 @@ const AppRouter = () => (
             <Route exact path="/home" component={HomePage}/>
             <Route path="/user" exact render={() => <Redirect to="/user/index" />}/>
             <Route exact path="/user/home" component={UserHomePage}/>
+            <Route exact path="/user/home/notes" component={Notes}/>
             <Route exact path="/user/setting" component={UserInfoPage}/>
             <Route exact path="/user/course" component={CoursePage}/>
+            <Route exact path="/user/course/homework" component={Homework}/>
             <Route render={() => <h1 className={''}>找不到此页面</h1>} />
         </Switch>
     </div>

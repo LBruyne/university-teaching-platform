@@ -1,5 +1,6 @@
 import React from 'react';
 import download_icon from '../../assets/images/CoursePage/download.png';
+import Homework from "./homework";
 
 class TchCourse extends React.Component{
     constructor(props) {
@@ -248,7 +249,9 @@ class TchCourse extends React.Component{
                 >
                     {e['title']}
                     <button>download</button>
-                    <button>submit</button>
+                    <button onClick={()=>{
+                        window.location.href = '/user/course/homework';
+                    }}>grade</button>
                     <button>upload</button>
                 </div>
             )
