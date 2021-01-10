@@ -52,12 +52,17 @@ class Login extends Component {
     attemptLogin = () => {
 
         let url = "http://localhost:5000/loginValidness?" + "userName=" + this.state.username + "&" +
-            "passWD=" + this.state.password + "&" + "type=" + this.state.type
-
+            "passWD=" + this.state.password + "&" + "type=" + this.state.type;
+        let form = {
+            'userName': this.state.username,
+            'passWD': this.state.password,
+            'type': this.state.type
+        }
         // 从外部取数据
         fetch(url, {
                 method: "GET",
                 mode: "cors",
+                //body: JSON.stringify(form),
             }
         )
         .then(response => response.json())
@@ -209,6 +214,7 @@ class Login extends Component {
             </div>
         );
     }
+
     changeTab=(value)=>{
         this.setState({
             tabStatus:value

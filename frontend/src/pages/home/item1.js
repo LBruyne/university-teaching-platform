@@ -630,14 +630,14 @@ class Item1 extends Component{
                                                     <use xlinkHref='#iconyonghuming'></use>
                                                 </svg>
                                                 8439
-                                            </span>
+                                        </span>
                                         <span className="course-star-box">
                                                 <svg className='icon-svg'><use xlinkHref='#icongongneng_xingxing-'></use></svg>
                                                 <svg className='icon-svg'><use xlinkHref='#icongongneng_xingxing-'></use></svg>
                                                 <svg className='icon-svg'><use xlinkHref='#icongongneng_xingxing-'></use></svg>
                                                 <svg className='icon-svg'><use xlinkHref='#icongongneng_xingxing-'></use></svg>
                                                 <svg className='icon-svg'><use xlinkHref='#icongongneng_xingxing-'></use></svg>
-                                            </span>
+                                        </span>
                                     </div>
                                 </div>
                             </div>

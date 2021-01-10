@@ -82,7 +82,8 @@ class WebHeader extends React.Component {
                 {this.state.isLogin==false&&
                 <div className="header-right">
                     <Login ref={node => this.login = node}/>
-                    <div className="header-btn login" onClick={() => {
+                    <div className="header-btn login"
+                         onClick={() => {
                         this.login.showModal()
                         this.login.changeTab('login')
                     }}>登录

@@ -5,10 +5,9 @@ import { Route, Switch, Redirect } from 'react-router-dom';
  * 引入各个页面组件
  */
 import HomePage from "../pages/home";
-import UserIndexPage from "../pages/userIndex";
 import UserInfoPage from "../pages/userinfo";
 import CoursePage from "../pages/course";
-import UserHomePage from "../pages/userIndex";
+import UserHomePage from "../pages/userhome";
 
 /**
  * 网页路由组件
