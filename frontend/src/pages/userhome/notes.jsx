@@ -5,8 +5,8 @@ class Notes extends React.Component{
         super(props);
         this.state = {
             notes:[
-                'hello',
-                'world'
+                '今天去comfinement room研习化学吧',
+                '明天再去Ciker Lake实地考察生态学'
             ]
         }
     }
@@ -26,7 +26,8 @@ class Notes extends React.Component{
                         this.setState({
                             notes: old,
                         });
-                    }}>add</button>
+                    }}>添加笔记</button>
+                <div class={'note-title'}> 已往笔记 Former Notes </div>
                 {this.state.notes.map(
                     item => <li class={'note'} key={item}>
                         <div class={'text'}>{item}</div>
@@ -38,7 +39,7 @@ class Notes extends React.Component{
                                     notes: old,
                                 })
                             }
-                        }>delete</button>
+                        }>删除笔记</button>
                     </li>
                 )}
             </div>
