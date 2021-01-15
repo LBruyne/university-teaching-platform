@@ -35,7 +35,6 @@ class TchCourse extends React.Component{
     }
     get_course_id(){
         let c_id = this.get_url_param('course');
-        console.log(c_id);
         return c_id;
     }
     get_course(){
@@ -170,7 +169,7 @@ class TchCourse extends React.Component{
         let c_id = this.get_course_id();
         if(c_id<=0)
             c_id=1;
-        return courses[c_id];
+        return courses[1];
     }
     render(){
         const style = {
@@ -265,7 +264,6 @@ class TchCourse extends React.Component{
                 </div>
             )
         }
-
         let checkFlag = (flag) => {
             if(flag === this.INFO)
                 return info()
@@ -276,7 +274,6 @@ class TchCourse extends React.Component{
             else if(flag === this.ASSIGNMENT)
                 return assignment()
         }
-
         let getStyleByFlag = (flag) => {
             if(flag === this.state.contentFlag)
                 return {
@@ -341,7 +338,6 @@ class TchCourse extends React.Component{
                         </li>
                     </div>
                 </div>
-
                 <div className="cp-content">
                     <div className="cp-content-info">
                         {/*{checkFlag(this.state.contentFlag)}*/}
@@ -355,5 +351,4 @@ class TchCourse extends React.Component{
         )
     }
 }
-
 export default TchCourse;
